@@ -23,6 +23,10 @@ func TestCleanInput(t *testing.T) {
 			input:    "    hello		world    ",
 			expected: []string{"hello", "world"},
 		},
+		"capitalization": {
+			input:    "Hello wOrlD",
+			expected: []string{"hello", "world"},
+		},
 	}
 
 	for name, c := range cases {
