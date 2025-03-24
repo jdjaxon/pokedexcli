@@ -2,19 +2,33 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/jdjaxon/pokedexcli/internal/api"
 )
 
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config) error
 }
 
+type config struct {
+	client      api.Client
+	nextURL     *string
+	previousURL *string
+}
+
+var (
+	ErrBadConfig = errors.New("config not set")
+	ErrFirstPage = errors.New("you're on the first page")
+)
+
 // runRepl runs the Pokedex REPL
-func runRepl() {
+func runRepl(conf *config) {
 	commands := getCommands()
 	scanner := bufio.NewScanner(os.Stdin)
 
@@ -33,9 +47,9 @@ func runRepl() {
 			continue
 		}
 
-		err := command.callback()
+		err := command.callback(conf)
 		if err != nil {
-			fmt.Errorf("%s callback failed: %w", command.name, err)
+			fmt.Println(err)
 		}
 	}
 }
