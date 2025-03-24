@@ -22,12 +22,12 @@ func (c *Client) GetLocations(reqURL *string) (LocationResponse, error) {
 	}
 	defer resp.Body.Close()
 
-	var areaResp LocationResponse
+	var locResp LocationResponse
 	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&areaResp)
+	err = decoder.Decode(&locResp)
 	if err != nil {
 		return LocationResponse{}, err
 	}
 
-	return areaResp, nil
+	return locResp, nil
 }
