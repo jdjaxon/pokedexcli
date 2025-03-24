@@ -13,21 +13,6 @@ type cliCommand struct {
 	callback    func() error
 }
 
-func getCommands() map[string]cliCommand {
-	return map[string]cliCommand{
-		"exit": {
-			name:        "exit",
-			description: "Exit the Pokedex",
-			callback:    commandExit,
-		},
-		"help": {
-			name:        "help",
-			description: "Display the Pokedex help menu",
-			callback:    commandHelp,
-		},
-	}
-}
-
 // runRepl runs the Pokedex REPL
 func runRepl() {
 	commands := getCommands()
@@ -63,22 +48,27 @@ func cleanInput(text string) []string {
 	return words
 }
 
-// commandExit is the callback function to enable the user to exit the REPL.
-func commandExit() error {
-	fmt.Println("Closing the Pokedex... Goodbye!")
-	os.Exit(0)
-	return nil
-}
-
-// commandHelp is the callback function to enable the user to display the help.
-func commandHelp() error {
-	fmt.Println("Welcome to the Pokedex!")
-	fmt.Println("Usage:")
-	fmt.Println()
-	for cmd, details := range getCommands() {
-		fmt.Printf("%s: %s\n", cmd, details.description)
+func getCommands() map[string]cliCommand {
+	return map[string]cliCommand{
+		"exit": {
+			name:        "exit",
+			description: "Exit the Pokedex",
+			callback:    commandExit,
+		},
+		"help": {
+			name:        "help",
+			description: "Display the Pokedex help menu",
+			callback:    commandHelp,
+		},
+		"map": {
+			name:        "map",
+			description: "Display map location areas. Successive calls increment page",
+			callback:    commandMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Display map location areas. Successive calls decrement page",
+			callback:    commandMapBack,
+		},
 	}
-	fmt.Println()
-
-	return nil
 }
