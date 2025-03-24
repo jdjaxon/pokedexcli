@@ -19,6 +19,7 @@ func commandHelp() error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Println()
+
 	for cmd, details := range getCommands() {
 		fmt.Printf("%s: %s\n", cmd, details.description)
 	}
@@ -29,9 +30,15 @@ func commandHelp() error {
 
 // commandExit is the callback function to enable the user to exit the REPL.
 func commandMap() error {
-	for area := range client.GetLocationAreas() {
+	areas, err := client.GetLocationAreas()
+	if err != nil {
+		return err
+	}
+
+	for _, area := range areas {
 		fmt.Println(area)
 	}
+
 	return nil
 }
 

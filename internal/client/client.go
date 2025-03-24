@@ -23,10 +23,10 @@ func GetLocationAreas() ([]string, error) {
 		return []string{}, err
 	}
 
-	var locationNames []string
-	for area := range areas.results {
-		areas = append(areas, area.name)
+	var areaNames []string
+	for _, area := range areas.Results {
+		areaNames = append(areaNames, area.Name)
 	}
 
-	return areas, nil
+	return areaNames, nil
 }
