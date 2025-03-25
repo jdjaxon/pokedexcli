@@ -7,9 +7,11 @@ import (
 const (
 	baseURL          = "https://pokeapi.co/api/v2/"
 	locationEndpoint = "location-area/"
+	pokemonEndpoint  = "pokemon/"
 )
 
 var (
 	ErrInvalidUrl = errors.New("invalid or empty URL")
-	ErrInvalidLoc = errors.New("invalid or empty location")
+	ErrLocation   = errors.New("no location provided")
+	ErrPokemon    = errors.New("no pokemon provided")
 )
