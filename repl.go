@@ -13,7 +13,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*config, string) error
 }
 
 type config struct {
@@ -36,18 +36,28 @@ func runRepl(conf *config) {
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
 		input := cleanInput(scanner.Text())
-		if len(input) == 0 {
+
+		var cmd string
+		var arg string
+		argCount := len(input)
+		switch argCount {
+		case 2:
+			arg = input[1]
+			fallthrough
+		case 1:
+			cmd = input[0]
+		default:
 			continue
 		}
 
-		command, ok := commands[input[0]]
+		command, ok := commands[cmd]
 		if !ok {
 			fmt.Println("Unknown command")
 			fmt.Println()
 			continue
 		}
 
-		err := command.callback(conf)
+		err := command.callback(conf, arg)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -62,6 +72,7 @@ func cleanInput(text string) []string {
 	return words
 }
 
+// getCommands returns a map of registered commands.
 func getCommands() map[string]cliCommand {
 	return map[string]cliCommand{
 		"exit": {
@@ -83,6 +94,11 @@ func getCommands() map[string]cliCommand {
 			name:        "mapb",
 			description: "Display map location areas. Successive calls decrement page",
 			callback:    commandMapBack,
+		},
+		"explore": {
+			name:        "explore",
+			description: "List all Pokemon in the specified location",
+			callback:    commandExplore,
 		},
 	}
 }
