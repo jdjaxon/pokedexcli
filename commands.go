@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
+
+	"github.com/jdjaxon/pokedexcli/internal/pokedex"
 )
 
 // commandExit is the callback function to enable the user to exit the REPL.
@@ -90,5 +93,72 @@ func commandExplore(conf *config, location string) error {
 		fmt.Printf("- %s\n", encounter.Pokemon.Name)
 	}
 
+	return nil
+}
+
+// commandCatch -
+func commandCatch(conf *config, pokemonName string) error {
+	if conf == nil {
+		return ErrBadConfig
+	}
+
+	if pokemonName == "" {
+		return fmt.Errorf("no pokemon provided")
+	}
+
+	pokemon, err := conf.client.CatchPokemon(pokemonName)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon.Name)
+	threshold := pokedex.MaxBaseExperience - pokemon.BaseExperience
+	roll := rand.Int() % pokedex.MaxBaseExperience
+	if roll > threshold {
+		fmt.Printf("%s escaped!\n", pokemon.Name)
+		return nil
+	}
+
+	fmt.Printf("%s was caught!\n", pokemon.Name)
+	conf.pokedex.Add(&pokemon)
+	return nil
+}
+
+func commandInspect(conf *config, pokemonName string) error {
+	if conf == nil {
+		return ErrBadConfig
+	}
+
+	if pokemonName == "" {
+		return fmt.Errorf("no pokemon provided")
+	}
+
+	pokemon, ok := conf.pokedex.Get(pokemonName)
+	if !ok {
+		return fmt.Errorf("you have not caught that pokemon")
+	}
+
+	fmt.Printf("Name: %v\n", pokemon.Name)
+	fmt.Printf("Height: %v\n", pokemon.Height)
+	fmt.Printf("Weight: %v\n", pokemon.Weight)
+	fmt.Printf("Stats:\n")
+	for _, stat := range pokemon.Stats {
+		fmt.Printf(" - %s: %v\n", stat.Stat.Name, stat.BaseStat)
+	}
+
+	fmt.Printf("Types:\n")
+	for _, pokemonType := range pokemon.Types {
+		fmt.Printf(" - %s\n", pokemonType.Type.Name)
+	}
+	return nil
+}
+
+func commandPokedex(conf *config, arg string) error {
+	if conf == nil {
+		return ErrBadConfig
+	}
+
+	fmt.Println("Your Pokedex:")
+	conf.pokedex.ListAll()
 	return nil
 }
