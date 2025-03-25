@@ -1,7 +1,7 @@
 package api
 
 type LocationResponse struct {
-	Count    int    `json:"count"`
+	Count    int     `json:"count"`
 	Next     *string `json:"next"`
 	Previous *string `json:"previous"`
 	Results  []struct {
@@ -11,8 +11,8 @@ type LocationResponse struct {
 }
 
 type ExploreResponse struct {
-	ID                   int    `json:"id"`
-	Name                 string `json:"name"`
+	ID       int    `json:"id"`
+	Name     string `json:"name"`
 	Location struct {
 		Name string `json:"name"`
 		URL  string `json:"url"`
