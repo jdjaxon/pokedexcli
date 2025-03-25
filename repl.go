@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/jdjaxon/pokedexcli/internal/api"
+	"github.com/jdjaxon/pokedexcli/internal/pokedex"
 )
 
 type cliCommand struct {
@@ -20,6 +21,7 @@ type config struct {
 	client      api.Client
 	nextURL     *string
 	previousURL *string
+	pokedex     *pokedex.Pokedex
 }
 
 var (
@@ -31,6 +33,7 @@ var (
 func runRepl(conf *config) {
 	commands := getCommands()
 	scanner := bufio.NewScanner(os.Stdin)
+	conf.pokedex = pokedex.NewPokedex()
 
 	for {
 		fmt.Print("Pokedex > ")
@@ -99,6 +102,21 @@ func getCommands() map[string]cliCommand {
 			name:        "explore",
 			description: "List all Pokemon in the specified location",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Attempt to catch a pokemon and add it to pokedex if successful",
+			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "inspect",
+			description: "Display Pokemon details",
+			callback:    commandInspect,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "Display all Pokemon in the Pokedex",
+			callback:    commandPokedex,
 		},
 	}
 }
