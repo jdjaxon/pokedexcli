@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/jdjaxon/pokedexcli/internal/pokedex"
 )
 
 // GetLocations -
@@ -26,7 +28,7 @@ func (c *Client) GetLocations(reqURL *string) (LocationResponse, error) {
 // ExploreLocation -
 func (c *Client) ExploreLocation(location string) (ExploreResponse, error) {
 	if location == "" {
-		return ExploreResponse{}, ErrInvalidLoc
+		return ExploreResponse{}, ErrLocation
 	}
 
 	url := baseURL + locationEndpoint + location
@@ -38,6 +40,23 @@ func (c *Client) ExploreLocation(location string) (ExploreResponse, error) {
 	}
 
 	return expResp, nil
+}
+
+// CatchPokemon -
+func (c *Client) CatchPokemon(name string) (pokedex.Pokemon, error) {
+	if name == "" {
+		return pokedex.Pokemon{}, ErrPokemon
+	}
+
+	url := baseURL + pokemonEndpoint + name
+
+	var pokemon pokedex.Pokemon
+	err := c.getJSON(url, &pokemon)
+	if err != nil {
+		return pokedex.Pokemon{}, err
+	}
+
+	return pokemon, nil
 }
 
 func (c *Client) getJSON(url string, target any) error {
