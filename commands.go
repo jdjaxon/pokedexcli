@@ -6,7 +6,7 @@ import (
 )
 
 // commandExit is the callback function to enable the user to exit the REPL.
-func commandExit(conf *config) error {
+func commandExit(conf *config, arg string) error {
 
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
@@ -14,7 +14,7 @@ func commandExit(conf *config) error {
 }
 
 // commandHelp is the callback function to enable the user to display the help.
-func commandHelp(conf *config) error {
+func commandHelp(conf *config, arg string) error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Println()
@@ -27,8 +27,8 @@ func commandHelp(conf *config) error {
 	return nil
 }
 
-// commandExit is the callback function to enable the user to exit the REPL.
-func commandMap(conf *config) error {
+// commandMap -
+func commandMap(conf *config, arg string) error {
 	if conf == nil {
 		return ErrBadConfig
 	}
@@ -47,8 +47,8 @@ func commandMap(conf *config) error {
 	return nil
 }
 
-// commandExit is the callback function to enable the user to exit the REPL.
-func commandMapBack(conf *config) error {
+// commandMapBack -
+func commandMapBack(conf *config, arg string) error {
 	if conf == nil {
 		return ErrBadConfig
 	}
@@ -66,6 +66,28 @@ func commandMapBack(conf *config) error {
 	conf.previousURL = resp.Previous
 	for _, area := range resp.Results {
 		fmt.Println(area.Name)
+	}
+
+	return nil
+}
+
+// commandExplore -
+func commandExplore(conf *config, location string) error {
+	if conf == nil {
+		return ErrBadConfig
+	}
+
+	if location == "" {
+		return fmt.Errorf("no location provided")
+	}
+
+	resp, err := conf.client.ExploreLocation(location)
+	if err != nil {
+		return err
+	}
+
+	for _, encounter := range resp.PokemonEncounters {
+		fmt.Printf("- %s\n", encounter.Pokemon.Name)
 	}
 
 	return nil
